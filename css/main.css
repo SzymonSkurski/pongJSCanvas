@@ -1,0 +1,11 @@
+body {
+    height: 100vh;
+    background-color: black  ;
+}
+canvas#board {
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
+}
+canvas#play {
+    margin-left: -300px;
+}
