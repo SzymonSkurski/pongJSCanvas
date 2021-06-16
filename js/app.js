@@ -10,9 +10,7 @@ let ai1 = true;
 let ai2 = true;
 
 //keys listener
-document.onkeydown = checkKey;
-
-function checkKey(e) {
+document.onkeydown = (e) => {
     let key = e.key;
     if (key === 'w') {
         ai1 = false;
@@ -34,6 +32,21 @@ function checkKey(e) {
     }
     if (key === 'Enter') {
         restart();
+    }
+}
+document.onkeyup = (e) => {
+    let key = e.key;
+    if (key === 'w') {
+        getRacket1().vectorY = 0;
+    }
+    if (key === 's') {
+        getRacket1().vectorY = 0;
+    }
+    if (key === 'ArrowUp') {
+        getRacket2().vectorY = 0;
+    }
+    if (key === 'ArrowDown') {
+        getRacket2().vectorY = 0;
     }
 }
 
