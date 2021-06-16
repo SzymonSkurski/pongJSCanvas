@@ -14,4 +14,5 @@ To start act as left or right racket use control keys.
 'arrowUp' - move right racket up <br/>
 'arrowDown' - move right racket down <br/>
 'Enter' - restart the game <br/>
-<a target="_blank" href="https://rawcdn.githack.com/SzymonSkursrki/pongJSCanvas/master/index.html">https://rawcdn.githack.com/SzymonSkursrki/pongJSCanvas/master/index.html</a>
+<br/>
+<a onclick="window.open(this.href,'_blank');return false;" href="https://rawcdn.githack.com/SzymonSkursrki/pongJSCanvas/master/index.html">play</a>
