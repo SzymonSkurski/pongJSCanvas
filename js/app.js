@@ -260,9 +260,9 @@ function racketAI(side = 0) {
         return;
     }
     let y = r.getCenterY();
-    if (ball.y < y) r.vectorY = -1;
-    if (ball.y > y) r.vectorY = 1;
-    if (ball.y === y) r.vectorY = 0
+    if (ball.y < y - 1) r.vectorY = -1;
+    if (ball.y > y + 1) r.vectorY = 1;
+    if (ball.y < y - 1 && ball.y > y + 1) r.vectorY = 0
 }
 
 function run() {
