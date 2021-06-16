@@ -3,21 +3,34 @@ let ballId = -1;
 let p1 = 0;
 let p2 = 0;
 let r1 = null;
-let r2 = null;
+let r = null;
 let maxP = 5;
 let game = 0;
+let ai1 = true;
+let ai2 = true;
 
 //keys listener
-document.addEventListener("keypress", function onPress(event) {
-    keyEvents(event.key);
-});
+document.onkeydown = checkKey;
 
-function keyEvents(key) {
+function checkKey(e) {
+    let key = e.key;
     if (key === 'w') {
+        ai1 = false;
         getRacket1().vectorY = -1;
     }
     if (key === 's') {
+        ai1 = false;
         getRacket1().vectorY = 1;
+    }
+    if (key === 'ArrowUp') {
+        e.preventDefault();
+        getRacket2().vectorY = -1;
+        ai2 = false;
+    }
+    if (key === 'ArrowDown') {
+        e.preventDefault();
+        getRacket2().vectorY = 1;
+        ai2 = false;
     }
     if (key === 'Enter') {
         restart();
@@ -139,7 +152,7 @@ function addRackets() {
     racket2.vectorY = 0;
     racket2.draw();
     elements2d[racket2.id] = racket2;
-    r2 = racket2;
+    r = racket2;
 }
 
 /**
@@ -155,8 +168,8 @@ function getRacket1() {
  * @returns {Rectangle}
  */
 function getRacket2() {
-    if (r2 === null) addRackets();
-    return r2;
+    if (r === null) addRackets();
+    return r;
 }
 
 function addBall() {
@@ -216,23 +229,32 @@ function checkEndGame() {
     }
 }
 
-function player2SI() {
+function playerAI() {
+    if (ai1) racketAI(0);
+    if (ai2) racketAI(1);
+}
+
+/**
+ * @param side 0 - left; 1 - right
+ */
+function racketAI(side = 0) {
+    let r = !side ? getRacket1() : getRacket2();
     let mx = getCanvasMiddleX('play');
     let ball = getBall();
-    let r2 = getRacket2();
-    if (ball.x < mx) {
-        r2.vectorY = 0;
+    //left move if ball is on left side and right opposite
+    if ((!side && ball.x > mx) || (side === 1 && ball.x < mx)) {
+        r.vectorY = 0;
         return;
     }
-    let y = r2.getCenterY();
-    if (ball.y < y) r2.vectorY = -1;
-    if (ball.y > y) r2.vectorY = 1;
-    if (ball.y === y) r2.vectorY = 0
+    let y = r.getCenterY();
+    if (ball.y < y) r.vectorY = -1;
+    if (ball.y > y) r.vectorY = 1;
+    if (ball.y === y) r.vectorY = 0
 }
 
 function run() {
     clearCanvas();
-    player2SI();
+    playerAI();
     elements2d.forEach(function(el) {
         if (!el) {
             return;
@@ -253,6 +275,8 @@ function restart() {
     if (game) return;
     p1 = 0;
     p2 = 0;
+    ai1 = true;
+    ai2 = true;
     restartBall();
     drawBoard();
     game = setInterval(run, 10);
