@@ -11,8 +11,10 @@ class PongRacket extends Rectangle {
     }
     edgeCollisionEffectsBottom() {
         this.vectorY = 0;
+        this.y = this.getCanvas().height - this.height;
     }
     edgeCollisionEffectsTop() {
         this.vectorY = 0;
+        this.y = 0;
     }
 }
