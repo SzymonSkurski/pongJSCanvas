@@ -1,5 +1,28 @@
 let elements2d = []; //store all 2d elements
+let ballId = -1;
+let p1 = 0;
+let p2 = 0;
+let r1 = null;
+let r2 = null;
+let maxP = 1;
+let game = 0;
 
+//keys listener
+document.addEventListener("keypress", function onPress(event) {
+    keyEvents(event.key);
+});
+
+function keyEvents(key) {
+    if (key === 'w') {
+        getRacket1().vectorY = -1;
+    }
+    if (key === 's') {
+        getRacket1().vectorY = 1;
+    }
+    if (key === 'Enter') {
+        restart();
+    }
+}
 
 /**
  * returns a random number between min and max (both included)
@@ -24,7 +47,7 @@ function range(start, end) {
         s++;
     }
     return r;
-};
+}
 
 function addDrone() {
     let drone = new Drone(elements2d.length || 0);
@@ -64,23 +87,27 @@ function getCanvasMiddleX(id = 'board') {
     return w % 2 === 0 ? Math.floor(w / 2) : Math.ceil(w / 2); //middle x
 }
 
+function getCanvasMiddleY(id = 'play') {
+    let h = document.getElementById(id).height - 1;
+    return h % 2 === 0 ? Math.floor(h / 2) : Math.ceil(h / 2); //middle y
+}
+
 function drawBoardPoints() {
     let id = 'board';
-    let p1 = 2;
-    let p2 = 2;
     let mx = getCanvasMiddleX(id);
     let canvas = document.getElementById(id);
     let size = Math.ceil(canvas.width * 0.08);
     let space = Math.ceil(size / 2);
     let ctx = canvas.getContext('2d');
     ctx.font = size + "px Courier New CE";
-    ctx.fillText(p1, mx - size, size);
-    ctx.fillText(p2, mx + space, size);
-    console.log(size);
+    ctx.fillText(p1.toString(), mx - size  , size);
+    ctx.fillText(p2.toString(), mx + space, size);
 }
 
 function drawBoard() {
-    let canvas = document.getElementById('board');
+    let cid = 'board';
+    clearCanvas(cid)
+    let canvas = document.getElementById(cid);
     let ctx = canvas.getContext('2d');
     ctx.fillStyle = 'white';
     ctx.strokeStyle = "white";
@@ -88,27 +115,154 @@ function drawBoard() {
     drawBoardPoints();
 }
 
-// function run() {
-//     clearCanvas();
-//     elements2d.forEach(function(el) {
-//         if (!el) {
-//             return;
-//         }
-//         if (el.size < 1) {
-//             el.destroy();
-//             return;
-//         }
-//         el.move();
-//         el.addMSLC(); //count moves since last colision
-//         el.colisions();
-//         el.draw();
-//     });
-// };
-//
-// let d = 100;
-// while (d > 0) {
-//     addDrone();
-//     d--;
-// }
-// setInterval(run, 33);
-drawBoard();
+function addRackets() {
+    let cid = 'play'
+    let canvas = document.getElementById(cid);
+    let cmy = getCanvasMiddleY(cid);
+    let padding = Math.ceil(canvas.width * 0.01);
+    let racket1 = new PongRacket(elements2d.length, cid);
+    racket1.height = padding * 6;
+    racket1.width = padding;
+    racket1.x = padding;
+    racket1.y = cmy - (racket1.height / 2);
+    racket1.vectorX = 0;
+    racket1.vectorY = 0;
+    racket1.draw();
+    elements2d[racket1.id] = racket1;
+    r1 = racket1;
+    let racket2 = new PongRacket(elements2d.length, cid);
+    racket2.height = padding * 6;
+    racket2.width = padding;
+    racket2.x = canvas.width - padding - racket2.width;
+    racket2.y = cmy - (racket2.height / 2);
+    racket2.vectorX = 0;
+    racket2.vectorY = 0;
+    racket2.draw();
+    elements2d[racket2.id] = racket2;
+    r2 = racket2;
+}
+
+/**
+ * @returns {Rectangle}
+ */
+function getRacket1() {
+    if (r1 === null) addRackets();
+    return r1;
+}
+
+/**
+ *
+ * @returns {Rectangle}
+ */
+function getRacket2() {
+    if (r2 === null) addRackets();
+    return r2;
+}
+
+function addBall() {
+    let cid = 'play'
+    let ball = new PongBall(elements2d.length, cid);
+    elements2d[ball.id] = ball;
+    ballId = ball.id;
+    restartBall();
+}
+
+function restartBall() {
+    let cid = 'play'
+    let canvas = document.getElementById(cid);
+    let cmy = getCanvasMiddleY(cid);
+    let cmx = getCanvasMiddleX(cid);
+    let padding = Math.ceil(canvas.width * 0.01);
+    let ball = getBall();
+    ball.height = padding;
+    ball.width = padding;
+    ball.x = cmx - Math.floor(padding / 2);
+    ball.y = cmy - Math.floor(padding / 2);
+    ball.setRandomVectors(false);
+    ball.draw();
+    ball.out = false;
+}
+
+function getBall() {
+    if (ballId === -1) addBall();
+    return elements2d[ballId];
+}
+
+function score() {
+    let out = this.getBall().out;
+    if (!out) return; //no bother
+    if (out === 1) {
+        //points for player 2
+        p2++;
+    }
+    if (out === 2) {
+        //points for player 1
+        p1++;
+    }
+    checkEndGame();
+    //restart game;
+    drawBoard();
+    restartBall();
+}
+
+function checkEndGame() {
+    if (p1 >= maxP) {
+        clearInterval(game);
+        game = 0;
+    }
+    if (p2 >= maxP) {
+        clearInterval(game);
+        game = 0;
+    }
+}
+
+function player2SI() {
+    let mx = getCanvasMiddleX('play');
+    let ball = getBall();
+    let r2 = getRacket2();
+    if (ball.x < mx) {
+        r2.vectorY = 0;
+        return;
+    }
+    let y = r2.getCenterY();
+    if (ball.y < y) r2.vectorY = -1;
+    if (ball.y > y) r2.vectorY = 1;
+    if (ball.y === y) r2.vectorY = 0
+}
+
+function run() {
+    clearCanvas();
+    player2SI();
+    elements2d.forEach(function(el) {
+        if (!el) {
+            return;
+        }
+        if (el.getSize() < 1) {
+            el.destroy();
+            return;
+        }
+        el.move();
+        el.addMSLC(); //count moves since last colision
+        el.collisions();
+        el.draw();
+        score();
+    });
+}
+
+function restart() {
+    if (game) return;
+    p1 = 0;
+    p2 = 0;
+    restartBall();
+    drawBoard();
+    game = setInterval(run, 10);
+}
+
+function start() {
+    drawBoard();
+    addRackets();
+    addBall();
+    game = setInterval(run, 10);
+}
+
+start();
