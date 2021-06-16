@@ -8,7 +8,7 @@ class PongBall extends  Rectangle {
     }
     bounce(el) {
         this.revertVectors();
-        if (this.vectorY) this.vectorX = Math.min(5, this.changeVector(this.vectorX));
+        if (this.vectorX) this.vectorX = this.changeVector(this.vectorX);
         this.vectorY = this.changeVector(el.vectorY);
     }
 }

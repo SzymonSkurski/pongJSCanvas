@@ -22,16 +22,18 @@ document.onkeydown = (e) => {
     }
     if (key === 'ArrowUp') {
         e.preventDefault();
-        getRacket2().vectorY = -1;
+        getRacket2().vectorY = -getAspect();
         ai2 = false;
     }
     if (key === 'ArrowDown') {
         e.preventDefault();
-        getRacket2().vectorY = 1;
+        getRacket2().vectorY = getAspect();
         ai2 = false;
     }
-    if (key === 'Enter') {
-        restart();
+    if (key === 'Enter') restart();
+    if (key === 'Escape') {
+        clearInterval(game);
+        game = 0;
     }
 }
 document.onkeyup = (e) => {
@@ -73,15 +75,6 @@ function range(start, end) {
         s++;
     }
     return r;
-}
-
-function addDrone() {
-    let drone = new Drone(elements2d.length || 0);
-    // drone.setRandomRGB();
-    drone.setRGBFoF();
-    drone.setRandomXY();
-    drone.setRandomVectors();
-    elements2d.push(drone);
 }
 
 function clearCanvas(id = 'play') {
@@ -205,8 +198,16 @@ function restartBall() {
     ball.x = cmx - Math.floor(padding / 2);
     ball.y = cmy - Math.floor(padding / 2);
     ball.setRandomVectors(false);
+    let aspect = getAspect();
+    ball.vectorX *= aspect;
+    ball.vectorY *= aspect;
     ball.draw();
     ball.out = false;
+}
+
+function getAspect() {
+    let canvas = document.getElementById('play');
+    return Math.ceil(canvas.width / 500);
 }
 
 function getBall() {
@@ -260,8 +261,9 @@ function racketAI(side = 0) {
         return;
     }
     let y = r.getCenterY();
-    if (ball.y < y - 1) r.vectorY = -1;
-    if (ball.y > y + 1) r.vectorY = 1;
+    let aspect = getAspect();
+    if (ball.y < y - 1) r.vectorY = - aspect;
+    if (ball.y > y + 1) r.vectorY = aspect;
     if (ball.y < y - 1 && ball.y > y + 1) r.vectorY = 0
 }
 
@@ -295,7 +297,24 @@ function restart() {
     game = setInterval(run, 10);
 }
 
+function setCanvasSize() {
+    let width = window.innerWidth * 0.8;
+    let ratio = 0.6;
+    let cw = width;
+    let ch = Math.min(width * ratio, window.innerHeight);
+    let board = document.getElementById('board');
+    let play = document.getElementById('play');
+    board.width = cw;
+    board.height = ch;
+    play.width = cw;
+    play.height = ch;
+    // let m = Math.floor((window.innerWidth - cw) / 2);
+    play.style.marginTop = "-" + (ch) + "px";
+    // board.style.marginLeft = (cw + 4) + "px";
+}
+
 function start() {
+    setCanvasSize();
     drawBoard();
     addRackets();
     addBall();
