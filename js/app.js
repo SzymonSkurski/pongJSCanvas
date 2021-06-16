@@ -4,7 +4,7 @@ let p1 = 0;
 let p2 = 0;
 let r1 = null;
 let r2 = null;
-let maxP = 1;
+let maxP = 5;
 let game = 0;
 
 //keys listener
