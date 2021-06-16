@@ -109,7 +109,7 @@ class Element2d {
         return this.#perimeterMaxCache[0] < 0;
     }
     edgeCollisionEffectsLeft() {
-        this.vectorX = 1;
+        this.revertVectorX();
     }
     hasEdgeCollisionRight() {
         let w = this.getCanvas().width;
@@ -117,7 +117,7 @@ class Element2d {
         return this.#perimeterMaxCache[2] > w;
     }
     edgeCollisionEffectsRight() {
-        this.vectorX = -1;
+        this.revertVectorX();
     }
     hasEdgeCollisionBottom() {
         let h = this.getCanvas().height;
@@ -125,14 +125,14 @@ class Element2d {
         return this.#perimeterMaxCache[3] > h;
     }
     edgeCollisionEffectsBottom() {
-        this.vectorY = -1;
+        this.revertVectorY();
     }
     hasEdgeCollisionTop() {
         //[minX, minY, maxX, maxY]; minY < 0
         return this.#perimeterMaxCache[1] < 0;
     }
     edgeCollisionEffectsTop() {
-        this.vectorY = 1;
+        this.revertVectorY();
     }
     draw() {
         //implement draw on canvas
@@ -175,9 +175,15 @@ class Element2d {
         this.y -= this.vectorY;
     }
     revertVectors() {
-        this.vectorX *= -1;
-        this.vectorY *= -1;
+        this.revertVectorY();
+        this.revertVectorX();
     };
+    revertVectorX() {
+        this.vectorX *= -1;
+    }
+    revertVectorY() {
+        this.vectorY *= -1;
+    }
     changeVector(v, plus = 1) {
         return v < 0 ? v - plus : v + plus;
     }
