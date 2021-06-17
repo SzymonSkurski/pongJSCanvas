@@ -8,7 +8,7 @@ class Element2d {
     colorRGB = [255, 255, 255];
     // edgeCollisions = [1, 1, 1, 1]; // [left, top, right, bottom] 1 - bounce | 0 - pass
     pixelMap = []; //use for polygons [[x1, x2], ..., [xn, yn]]
-    #mSLC = 0; //moves since last collision
+    mSLC = 0; //moves since last collision
     #perimeterCache = [];
     #perimeterMaxCache = []; //[minX, minY, maxX, maxY];
     constructor(id, canvasId) {
@@ -57,7 +57,7 @@ class Element2d {
             if (!el.getSize() || !el.hasCollision(this)) {
                 return;
             }
-            this.#mSLC = 0; //has collision reset
+            this.mSLC = 0; //has collision reset
             this.bounce(el);
             //implement has collision
         }, this);
@@ -90,7 +90,7 @@ class Element2d {
         return this.y + Math.floor(this.height / 2);
     }
     addMSLC() {
-        this.#mSLC++;
+        this.mSLC++;
     }
     collisionCanvasEdges() {
         let c = false; //has collision
@@ -100,7 +100,7 @@ class Element2d {
         if (this.hasEdgeCollisionTop()) {this.edgeCollisionEffectsTop(); c = true} //top
         if (c) {
             //has collision
-            this.#mSLC = 0; //has collision reset
+            this.mSLC = 0; //has collision reset
             this.collisionRandEffects()
         }
     };
@@ -134,18 +134,22 @@ class Element2d {
     edgeCollisionEffectsTop() {
         this.revertVectorY();
     }
-    draw() {
+    show() {
+        this.draw();
+        // this.drawTrace();
+    }
+    draw(op = 1, rgb = []) {
         //implement draw on canvas
     };
-    drawTrace(drawCallback, max) {
+    drawTrace(drawCallback, traceRGB = [], max = 4, fade = 22) {
         let x = this.x; //store current
         let y = this.y;
-        let t = Math.min(max, this.#mSLC); //how many traces, max
-        let rgb = [255,255,155]; //trace color
+        let t = Math.min(max, this.mSLC); //how many traces, max
+        let rgb = traceRGB.length ? traceRGB : this.colorRGB; //trace color
         while(t > 1) {
             t--;
             this.moveBack();
-            drawCallback.apply(this, [(t * 2) / 10, rgb]);
+            drawCallback.apply(this, [t / fade, rgb]);
         }
         this.x = x;
         this.y = y; //restore to previous

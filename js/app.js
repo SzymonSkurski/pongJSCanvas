@@ -2,8 +2,8 @@ let elements2d = []; //store all 2d elements
 let ballId = -1;
 let p1 = 0;
 let p2 = 0;
-let r1 = null;
-let r = null;
+let rLeft = null;
+let rRight = null;
 let maxP = 5;
 let game = 0;
 let ai1 = true;
@@ -63,19 +63,19 @@ function randInt(min, max)
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
-function range(start, end) {
-    let r = [];
-    if (start === end) {
-        return r;
-    }
-    let s = Math.min(start, end);
-    let e = Math.max(start, end);
-    while(s <= e) {
-        r.push(s);
-        s++;
-    }
-    return r;
-}
+// function range(start, end) {
+//     let r = [];
+//     if (start === end) {
+//         return r;
+//     }
+//     let s = Math.min(start, end);
+//     let e = Math.max(start, end);
+//     while(s <= e) {
+//         r.push(s);
+//         s++;
+//     }
+//     return r;
+// }
 
 function clearCanvas(id = 'play') {
     let canvas = document.getElementById(id);
@@ -135,38 +135,33 @@ function drawBoard() {
 }
 
 function addRackets() {
+    rLeft = addRacket();
+    rRight = addRacket(false);
+}
+
+function addRacket(left = true) {
     let cid = 'play'
     let canvas = document.getElementById(cid);
     let cmy = getCanvasMiddleY(cid);
     let padding = Math.ceil(canvas.width * 0.01);
-    let racket1 = new PongRacket(elements2d.length, cid);
-    racket1.height = padding * 6;
-    racket1.width = padding;
-    racket1.x = padding;
-    racket1.y = cmy - (racket1.height / 2);
-    racket1.vectorX = 0;
-    racket1.vectorY = 0;
-    racket1.draw();
-    elements2d[racket1.id] = racket1;
-    r1 = racket1;
-    let racket2 = new PongRacket(elements2d.length, cid);
-    racket2.height = padding * 6;
-    racket2.width = padding;
-    racket2.x = canvas.width - padding - racket2.width;
-    racket2.y = cmy - (racket2.height / 2);
-    racket2.vectorX = 0;
-    racket2.vectorY = 0;
-    racket2.draw();
-    elements2d[racket2.id] = racket2;
-    r = racket2;
+    let racket = new PongRacket(elements2d.length, cid);
+    racket.height = padding * 6;
+    racket.width = padding;
+    racket.x = left ? padding : canvas.width - padding - racket.width;
+    racket.y = cmy - (racket.height / 2);
+    racket.vectorX = 0;
+    racket.vectorY = 0;
+    racket.show();
+    elements2d[racket.id] = racket;
+    return racket;
 }
 
 /**
  * @returns {Rectangle}
  */
 function getRacket1() {
-    if (r1 === null) addRackets();
-    return r1;
+    if (rLeft === null) addRackets();
+    return rLeft;
 }
 
 /**
@@ -174,8 +169,8 @@ function getRacket1() {
  * @returns {Rectangle}
  */
 function getRacket2() {
-    if (r === null) addRackets();
-    return r;
+    if (rRight === null) addRackets();
+    return rRight;
 }
 
 function addBall() {
@@ -201,7 +196,7 @@ function restartBall() {
     let aspect = getAspect();
     ball.vectorX *= aspect;
     ball.vectorY *= aspect;
-    ball.draw();
+    ball.show();
     ball.out = false;
 }
 
@@ -279,9 +274,9 @@ function run() {
             return;
         }
         el.move();
-        el.addMSLC(); //count moves since last colision
+        el.addMSLC(); //count moves since last collision
         el.collisions();
-        el.draw();
+        el.show();
         score();
     });
 }

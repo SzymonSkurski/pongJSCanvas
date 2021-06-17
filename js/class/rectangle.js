@@ -2,10 +2,10 @@ class Rectangle extends Element2d {
     constructor(id, canvasId) {
         super(id, canvasId);
     }
-    draw(op = 1) {
+    draw(op = 1, rgb = []) {
         let canvas = this.getCanvas();
         let ctx = canvas.getContext('2d');
-        let rgb = this.colorRGB;
+        rgb = rgb.length ? rgb : this.colorRGB;
         ctx.fillStyle = 'rgb(' + rgb.join() + ', ' + op + ')';
         ctx.fillRect(this.x, this.y, this.width, this.height);
         // this.drawPolygon(this.getPixelsMap(), 1, true);
