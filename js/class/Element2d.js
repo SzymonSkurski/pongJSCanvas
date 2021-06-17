@@ -206,20 +206,32 @@ class Element2d {
         this.x = randInt(minX, maxX);
         this.y = randInt(minY, maxY);
     }
-    //return rand -1 || 0 || 1
-    getRandVector(allowZero = true) {
-        return allowZero
-            ? randInt(-1, 1)
-            : randInt(0, 1) || -1; // 0 will give -1
+
+    /**
+     * @param range
+     * @param exclude
+     * @returns {*}
+     */
+    getRandVector(range = [-1, 1], exclude = []) {
+        return ArrayHelpers.randomItem(ArrayHelpers.rangeNum(range[0], range[1], exclude))
     }
-    setRandomVectors(allowZero = true) {
-        this.vectorX = this.getRandVector(allowZero);
-        this.vectorY = this.getRandVector(allowZero);
-        if (!allowZero && this.vectorX + this.vectorY === 0) {
-            !randInt(0, 2)
-                ? this.vectorX = this.getRandVector(false)
-                : this.vectorY = this.getRandVector(false);
-        }
+
+    /**
+     * example xRange:[-1, 1, [0]] will set vector -1 or 1
+     * example xRange:[-2, 2, [0, 1]] will set vector -2 | -1 | 2 (0 and 1 are excluded)
+     * @param xRange [min, max, [exclude]]
+     * @param yRange [min, max, [exclude]]
+     */
+    setRandomVectors(xRange = [-1, 1, []], yRange = [-1, 1, []]) {
+        this.randomVectorX(xRange, xRange[2] || []);
+        this.randomVectorY(yRange, yRange[2] || []);
+        // console.log(JSON.stringify([this.vectorX, this.vectorY]));
+    }
+    randomVectorX(range = [-1, 1], exclude = []) {
+        this.vectorX = this.getRandVector(range, exclude);
+    }
+    randomVectorY(range = [-1, 1], exclude = []) {
+        this.vectorY = this.getRandVector(range, exclude);
     }
     setRandomRGB() {
         this.colorRGB = [randInt(0, 255), randInt(0, 255), randInt(0, 255)];

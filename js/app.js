@@ -2,6 +2,7 @@ let elements2d = []; //store all 2d elements
 let ballId = -1;
 let p1 = 0;
 let p2 = 0;
+let lastScored = 0; //0 - no one; 1 - left; 2 -right
 let rLeft = null;
 let rRight = null;
 let maxP = 5;
@@ -12,6 +13,8 @@ let ai2 = true;
 //keys listener
 document.onkeydown = (e) => {
     let key = e.key;
+    //any key
+    document.getElementById('manual').style.display = "none";
     if (key === 'w') {
         ai1 = false;
         getRacket1().vectorY = -1;
@@ -52,6 +55,8 @@ document.onkeyup = (e) => {
     }
 }
 
+document.addEventListener("click", () => document.getElementById('manual').style.display = "none");
+
 /**
  * returns a random number between min and max (both included)
  * @param min
@@ -90,11 +95,12 @@ function drawBoardLine() {
     let cmx = getCanvasMiddleX(id);
     let s = w % 2 === 0 ? 2 : 1; //even board has 2 px line
     let ctx = canvas.getContext('2d');
+    let aspect = getAspect();
     //draw dashed line in middle
     while (s > 0) {
         s--;
         ctx.beginPath();
-        ctx.setLineDash([5, 15]);
+        ctx.setLineDash([aspect * 2, aspect * 5]);
         ctx.moveTo(cmx + s, 0);
         ctx.lineTo(cmx + s, canvas.height);
         ctx.stroke();
@@ -192,10 +198,12 @@ function restartBall() {
     ball.width = padding;
     ball.x = cmx - Math.floor(padding / 2);
     ball.y = cmy - Math.floor(padding / 2);
-    ball.setRandomVectors(false);
-    let aspect = getAspect();
-    ball.vectorX *= aspect;
-    ball.vectorY *= aspect;
+    let asp = getAspect();
+    //start from last scored side
+    let minX = lastScored === 2 ? 0 : -asp;
+    let maxX = lastScored === 1 ? 0 : asp;
+    let excX = asp > 1 ? ArrayHelpers.rangeNum(-asp + 1, asp - 1) : [0];
+    ball.setRandomVectors([minX, maxX, excX], [-asp, asp]);
     ball.show();
     ball.out = false;
 }
@@ -216,10 +224,12 @@ function score() {
     if (out === 1) {
         //points for player 2
         p2++;
+        lastScored = 2;
     }
     if (out === 2) {
         //points for player 1
         p1++;
+        lastScored = 1;
     }
     checkEndGame();
     //restart game;
@@ -250,16 +260,17 @@ function racketAI(side = 0) {
     let r = !side ? getRacket1() : getRacket2();
     let mx = getCanvasMiddleX('play');
     let ball = getBall();
+    let ry = r.getCenterY();
+    let aspect = getAspect();
     //left move if ball is on left side and right opposite
     if ((!side && ball.x > mx) || (side === 1 && ball.x < mx)) {
         r.vectorY = 0;
         return;
     }
-    let y = r.getCenterY();
-    let aspect = getAspect();
-    if (ball.y < y - 1) r.vectorY = - aspect;
-    if (ball.y > y + 1) r.vectorY = aspect;
-    if (ball.y < y - 1 && ball.y > y + 1) r.vectorY = 0
+    let by = ball.getCenterY();
+    if (by < ry) r.vectorY = - aspect;
+    if (by > ry + 1) r.vectorY = aspect;
+    if (by < ry - 1 && by > ry + 1) r.vectorY = 0
 }
 
 function run() {
@@ -287,6 +298,7 @@ function restart() {
     p2 = 0;
     ai1 = true;
     ai2 = true;
+    lastScored = 0;
     restartBall();
     drawBoard();
     game = setInterval(run, 10);
@@ -303,9 +315,9 @@ function setCanvasSize() {
     board.height = ch;
     play.width = cw;
     play.height = ch;
-    // let m = Math.floor((window.innerWidth - cw) / 2);
     play.style.marginTop = "-" + (ch) + "px";
-    // board.style.marginLeft = (cw + 4) + "px";
+    let manual = document.getElementById('manual');
+    manual.style.marginTop = "-" + (ch * 0.8) + "px";
 }
 
 function start() {

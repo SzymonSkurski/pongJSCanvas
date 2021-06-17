@@ -6,13 +6,27 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-    <canvas id="board" width="500" height="300"></canvas>
-    <canvas id="play" width="500" height="300"></canvas>
-<!--  <div></div>-->
+<canvas id="board" width="500" height="300" class="centerBox"></canvas>
+<canvas id="play" width="500" height="300" class="centerBox"></canvas>
+<div id="manual" class="centerBox">
+    <h1>canvas pong</h1>
+    <br/>As default both rackets are AI controlled.
+    <br/>To start act as left or right racket use control keys.
+    <h2>keys</h2>
+    <br/>'w' - move left racket up
+    <br/>'s' - move left racket down
+    <br/>'arrowUp' - move right racket up
+    <br/>'arrowDown' - move right racket down
+    <br/>'Enter' - restart the game
+    <br/>'Escape' - end game
+    <br/>
+    <br/>press any key
+</div>
 </body>
-<script src="js/class/element2d.js"></script>
-<script src="js/class/rectangle.js"></script>
-<script src="js/class/pongBall.js"></script>
-<script src="js/class/pongRacket.js"></script>
+<script src="js/class/ArrayHelpers.js"></script>
+<script src="js/class/Element2d.js"></script>
+<script src="js/class/Rectangle.js"></script>
+<script src="js/class/PongBall.js"></script>
+<script src="js/class/PongRacket.js"></script>
 <script src="js/app.js"></script>
 </html>
