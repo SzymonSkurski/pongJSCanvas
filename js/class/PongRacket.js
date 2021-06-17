@@ -1,4 +1,5 @@
 class PongRacket extends Rectangle {
+    controlAI = true;
     constructor(id, canvasId) {
         super(id, canvasId);
         this.vectorX = 0; //cannot move in X

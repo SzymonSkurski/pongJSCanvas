@@ -7,8 +7,8 @@ let rLeft = null;
 let rRight = null;
 let maxP = 5;
 let game = 0;
-let ai1 = true;
-let ai2 = true;
+let touchLastX = 0;
+let touchLastY = 0;
 
 //keys listener
 document.onkeydown = (e) => {
@@ -16,22 +16,18 @@ document.onkeydown = (e) => {
     //any key
     document.getElementById('manual').style.display = "none";
     if (key === 'w') {
-        ai1 = false;
-        getRacket1().vectorY = -1;
+        racketMoveUp(getRacketLeft());
     }
     if (key === 's') {
-        ai1 = false;
-        getRacket1().vectorY = 1;
+        racketMoveDown(getRacketLeft());
     }
     if (key === 'ArrowUp') {
         e.preventDefault();
-        getRacket2().vectorY = -getAspect();
-        ai2 = false;
+        racketMoveUp(getRacketRight());
     }
     if (key === 'ArrowDown') {
         e.preventDefault();
-        getRacket2().vectorY = getAspect();
-        ai2 = false;
+        racketMoveDown(getRacketRight());
     }
     if (key === 'Enter') restart();
     if (key === 'Escape') {
@@ -42,20 +38,95 @@ document.onkeydown = (e) => {
 document.onkeyup = (e) => {
     let key = e.key;
     if (key === 'w') {
-        getRacket1().vectorY = 0;
+        getRacketLeft().vectorY = 0;
     }
     if (key === 's') {
-        getRacket1().vectorY = 0;
+        getRacketLeft().vectorY = 0;
     }
     if (key === 'ArrowUp') {
-        getRacket2().vectorY = 0;
+        getRacketRight().vectorY = 0;
     }
     if (key === 'ArrowDown') {
-        getRacket2().vectorY = 0;
+        getRacketRight().vectorY = 0;
     }
 }
 
-document.addEventListener("click", () => document.getElementById('manual').style.display = "none");
+function racketMoveUp(racket) {
+    racket.vectorY = -getAspect();
+    racket.controlAI = false;
+}
+
+function racketMoveDown(racket) {
+    racket.vectorY = getAspect();
+    racket.controlAI = false;
+}
+
+document.addEventListener('click', manualClose);
+document.getElementById('play').addEventListener('touchstart', (e) => {
+    touch(e);
+    manualClose();
+    restart();
+});
+
+document.getElementById('play').addEventListener('touchend', (e) => {
+    e.preventDefault();
+    touchOver();
+});
+
+document.getElementById('play').addEventListener('touchcancel', (e) => {
+    e.preventDefault();
+    touchOver();
+});
+
+document.getElementById('play').addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    touch(e);
+});
+
+window.addEventListener("orientationchange", function() {
+    // screen.orientation.angle 90 | 180 is preferred
+    //TODO:: rotate screen on mobile; display notification rotate
+});
+
+function manualClose() {
+    document.getElementById('manual').style.display = 'none';
+}
+
+function touchOver() {
+    let x = touchLastX;
+    if (!touchLastX) return;
+    let r = getRacketDependOnSide(x);
+    r.vectorY = 0;
+    touchLastX = 0;
+    touchLastY = 0;
+}
+
+function touch(e) {
+    let off = (window.innerHeight - document.getElementById('play').height) / 2;
+    let y = Math.floor(e.targetTouches[0].clientY - off);
+    let x = Math.floor(e.targetTouches[0].clientX);
+    touchLastX = x;
+    touchLastY = y;
+    let r = getRacketDependOnSide(x);
+    let rCY = r.getCenterY();
+    // console.log(JSON.stringify([r.y, rCY, y, rCY - y]));
+    if (y === rCY) {
+        return;
+    }
+    y > r.getCenterY()
+        ? racketMoveDown(r)
+        : racketMoveUp(r);
+
+}
+
+function touchMove(e) {
+    let y = Math.floor(e.targetTouches[0].clientY || 0);
+    let x = Math.floor(e.targetTouches[0].clientX || 0);
+    let r = getRacketDependOnSide(x);
+    if (touchLastY) touchLastY < y ? racketMoveDown(r) : racketMoveUp(r);
+    touchLastX = x;
+    touchLastY = y;
+}
 
 /**
  * returns a random number between min and max (both included)
@@ -162,19 +233,32 @@ function addRacket(left = true) {
     return racket;
 }
 
+function getRacketDependOnSide(x) {
+    return getSide(x) === -1 ? getRacketLeft() : getRacketRight();
+}
+
 /**
- * @returns {Rectangle}
+ *
+ * @param x
+ * @returns {number} -1: left; 1: right
  */
-function getRacket1() {
+function getSide(x) {
+    let cmx = getCanvasMiddleX('play');
+    return x < cmx ? -1 : 1;
+}
+
+/**
+ * @returns {PongRacket}
+ */
+function getRacketLeft() {
     if (rLeft === null) addRackets();
     return rLeft;
 }
 
 /**
- *
- * @returns {Rectangle}
+ * @returns {PongRacket}
  */
-function getRacket2() {
+function getRacketRight() {
     if (rRight === null) addRackets();
     return rRight;
 }
@@ -249,28 +333,29 @@ function checkEndGame() {
 }
 
 function playerAI() {
-    if (ai1) racketAI(0);
-    if (ai2) racketAI(1);
+    racketAI(getRacketLeft());
+    racketAI(getRacketRight());
 }
 
 /**
- * @param side 0 - left; 1 - right
+ *
+ * @param racket {PongRacket}
  */
-function racketAI(side = 0) {
-    let r = !side ? getRacket1() : getRacket2();
+function racketAI(racket) {
+    if (!racket.controlAI) return; //no bother
     let mx = getCanvasMiddleX('play');
     let ball = getBall();
-    let ry = r.getCenterY();
+    let ry = racket.getCenterY();
     let aspect = getAspect();
     //left move if ball is on left side and right opposite
-    if ((!side && ball.x > mx) || (side === 1 && ball.x < mx)) {
-        r.vectorY = 0;
+    if ((racket.x < mx && ball.x > mx) || (racket.x > mx && ball.x < mx)) {
+        racket.vectorY = 0;
         return;
     }
     let by = ball.getCenterY();
-    if (by < ry) r.vectorY = - aspect;
-    if (by > ry + 1) r.vectorY = aspect;
-    if (by < ry - 1 && by > ry + 1) r.vectorY = 0
+    if (by < ry) racket.vectorY = - aspect;
+    if (by > ry + 1) racket.vectorY = aspect;
+    if (by < ry - 1 && by > ry + 1) racket.vectorY = 0
 }
 
 function run() {
@@ -296,8 +381,8 @@ function restart() {
     if (game) return;
     p1 = 0;
     p2 = 0;
-    ai1 = true;
-    ai2 = true;
+    getRacketLeft().controlAI = true;
+    getRacketRight().controlAI = true;
     lastScored = 0;
     restartBall();
     drawBoard();
@@ -305,7 +390,7 @@ function restart() {
 }
 
 function setCanvasSize() {
-    let width = window.innerWidth * 0.8;
+    let width = window.innerWidth * 0.9;
     let ratio = 0.6;
     let cw = width;
     let ch = Math.min(width * ratio, window.innerHeight);
@@ -315,9 +400,9 @@ function setCanvasSize() {
     board.height = ch;
     play.width = cw;
     play.height = ch;
-    play.style.marginTop = "-" + (ch) + "px";
-    let manual = document.getElementById('manual');
-    manual.style.marginTop = "-" + (ch * 0.8) + "px";
+    // play.style.marginTop = "-" + (ch) + "px";
+    // let manual = document.getElementById('manual');
+    // manual.style.marginTop = "-" + (ch * 0.8) + "px";
 }
 
 function start() {
