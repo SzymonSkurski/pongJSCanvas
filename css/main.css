@@ -22,6 +22,10 @@ canvas#play {
 div#manual {
     color: antiquewhite;
     text-align: center;
-    background-color: black;
+    background-color: transparent;
     font-size: 1em;
+}
+button.btn {
+    padding: 2em;
+    margin: 1em;
 }
