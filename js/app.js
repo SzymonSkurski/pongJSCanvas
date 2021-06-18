@@ -9,6 +9,9 @@ let maxP = 5;
 let game = 0;
 let touchLastX = 0;
 let touchLastY = 0;
+// let previousAngle = null; //cache previous angle
+// let rotation = null; //h - horizontal | v - vertical
+
 
 window.mobileCheck = () => {
     let check = false;
@@ -94,8 +97,13 @@ document.getElementById('play').addEventListener('touchmove', (e) => {
 });
 
 window.addEventListener("orientationchange", function() {
-    // screen.orientation.angle 90 | 180 is preferred
-    //TODO:: rotate screen on mobile; display notification rotate
+    // const angle = screen.orientation.angle;
+    // console.log(angle);
+    // if (previousAngle === null) {
+    //     previousAngle = angle;
+    // }
+    // // screen.orientation.angle 90 | 180 is preferred
+    // //TODO:: rotate screen on mobile; display notification rotate
 });
 
 function toggleFullScreen(force = false) {
@@ -103,8 +111,28 @@ function toggleFullScreen(force = false) {
             docEl = doc.documentElement,
             requestFullScreen = docEl.requestFullscreen || docEl.webkitRequestFullScreen,
             cancelFullScreen = doc.exitFullscreen || doc.webkitExitFullscreen;
-    if (!doc.fullscreenElement && !doc.webkitFullscreenElement) requestFullScreen.call(docEl);
-    else if (!force) cancelFullScreen.call(doc);
+    lockLandscape();
+    if (!doc.fullscreenElement && !doc.webkitFullscreenElement) {
+        requestFullScreen.call(docEl);
+        setCanvasSize();
+        drawBoard();
+    }
+    else if (!force) {
+        cancelFullScreen.call(doc);
+        setCanvasSize();
+        drawBoard();
+    }
+}
+
+function lockLandscape() {
+    const so = screen.orientation;
+    if (so.type === 'landscape-primary' || so.type === 'landscape-secondary') {
+        return;
+    }
+    screen.orientation.lock('landscape-primary').catch(function(error) {
+        //exception handle
+    });
+    //display rotate screen notification
 }
 
 function manualClose() {
@@ -157,20 +185,6 @@ function randInt(min, max)
 {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
-
-// function range(start, end) {
-//     let r = [];
-//     if (start === end) {
-//         return r;
-//     }
-//     let s = Math.min(start, end);
-//     let e = Math.max(start, end);
-//     while(s <= e) {
-//         r.push(s);
-//         s++;
-//     }
-//     return r;
-// }
 
 function clearCanvas(id = 'play') {
     let canvas = document.getElementById(id);
@@ -409,19 +423,20 @@ function restart() {
 }
 
 function setCanvasSize() {
-    let width = window.innerWidth * 0.9;
-    let ratio = 0.6;
+    const sw = screen.availWidth;
+    const sh = screen.availHeight;
+    // console.log([sw, sh]);
+    let width = sw * 0.96;
+    let ratio = 0.52;
     let cw = width;
-    let ch = Math.min(width * ratio, window.innerHeight);
+    let ch = Math.min(width * ratio, sh * 0.96);
+    // let ch = window.innerHeight * 0.9;
     let board = document.getElementById('board');
     let play = document.getElementById('play');
     board.width = cw;
     board.height = ch;
     play.width = cw;
     play.height = ch;
-    // play.style.marginTop = "-" + (ch) + "px";
-    // let manual = document.getElementById('manual');
-    // manual.style.marginTop = "-" + (ch * 0.8) + "px";
 }
 
 function greetings() {
