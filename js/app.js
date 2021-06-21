@@ -442,7 +442,7 @@ function setCanvasSize() {
     // let ch = window.innerHeight * 0.9;
     let board = document.getElementById('board');
     let play = document.getElementById('play');
-    console.log([sw, sh, cw, ch]);
+    // console.log([sw, sh, cw, ch]);
     board.width = cw;
     board.height = ch;
     play.width = cw;
