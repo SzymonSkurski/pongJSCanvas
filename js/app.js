@@ -12,6 +12,16 @@ let touchLastY = 0;
 // let previousAngle = null; //cache previous angle
 // let rotation = null; //h - horizontal | v - vertical
 
+// Math.median = (values = []) => {
+//     let l = values.length;
+//     if (l === 0) return 0 //no bother
+//     values.sort((a,b) => {
+//         return a - b;
+//     });
+//     let half = Math.floor(values.length / 2);
+//     if (l % 2) return values[half] * 1.0; //odd
+//     return (values[half] + values[half + 1]) / 2.0;  //even
+// }
 
 window.mobileCheck = () => {
     let check = false;
@@ -96,15 +106,19 @@ document.getElementById('play').addEventListener('touchmove', (e) => {
     touch(e);
 });
 
-window.addEventListener("orientationchange", function() {
-    // const angle = screen.orientation.angle;
-    // console.log(angle);
-    // if (previousAngle === null) {
-    //     previousAngle = angle;
-    // }
-    // // screen.orientation.angle 90 | 180 is preferred
-    // //TODO:: rotate screen on mobile; display notification rotate
-});
+window.addEventListener('resize', () => {
+    setCanvasSize();
+    drawBoard(); //reset
+}, true);
+
+// window.addEventListener("orientationchange", () => {
+//     const angle = screen.orientation.angle;
+//     console.log(angle);
+//     // if (previousAngle === null) {
+//     //     previousAngle = angle;
+//     // }
+//     // // screen.orientation.angle 90 | 180 is preferred
+// }); CSS is enough
 
 function toggleFullScreen(force = false) {
     const   doc = window.document,
@@ -251,14 +265,8 @@ function addRackets() {
 
 function addRacket(left = true) {
     let cid = 'play'
-    let canvas = document.getElementById(cid);
-    let cmy = getCanvasMiddleY(cid);
-    let padding = Math.ceil(canvas.width * 0.01);
-    let racket = new PongRacket(elements2d.length, cid);
-    racket.height = padding * 6;
-    racket.width = padding;
-    racket.x = left ? padding : canvas.width - padding - racket.width;
-    racket.y = cmy - (racket.height / 2);
+    let racket = new PongRacket(elements2d.length, cid, left);
+    racket.resetCanvasRelative();
     racket.vectorX = 0;
     racket.vectorY = 0;
     racket.show();
@@ -423,20 +431,24 @@ function restart() {
 }
 
 function setCanvasSize() {
-    const sw = screen.availWidth;
-    const sh = screen.availHeight;
-    // console.log([sw, sh]);
-    let width = sw * 0.96;
+    const sw = mobileCheck() ? screen.availWidth
+        : document.documentElement.clientWidth;
+    const sh = mobileCheck() ? screen.availHeight
+        : document.documentElement.clientHeight;
+    let width = Math.ceil(sw * 0.96);
     let ratio = 0.52;
     let cw = width;
-    let ch = Math.min(width * ratio, sh * 0.96);
+    let ch = Math.ceil(Math.min(width * ratio, sh * 0.96));
     // let ch = window.innerHeight * 0.9;
     let board = document.getElementById('board');
     let play = document.getElementById('play');
+    console.log([sw, sh, cw, ch]);
     board.width = cw;
     board.height = ch;
     play.width = cw;
     play.height = ch;
+    if (rRight) rRight.resetCanvasRelative();
+    if (rLeft) rLeft.resetCanvasRelative();
 }
 
 function greetings() {
