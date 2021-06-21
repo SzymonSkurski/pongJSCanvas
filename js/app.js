@@ -109,6 +109,7 @@ document.getElementById('play').addEventListener('touchmove', (e) => {
 window.addEventListener('resize', () => {
     setCanvasSize();
     drawBoard(); //reset
+    restartBall();
 }, true);
 
 // window.addEventListener("orientationchange", () => {
