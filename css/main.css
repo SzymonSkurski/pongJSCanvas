@@ -1,6 +1,7 @@
 body {
     height: 100vh;
     background-color: black;
+    overflow: hidden;
 }
 .centerBox {
     box-sizing: border-box;
@@ -28,4 +29,42 @@ div#manual {
 button.btn {
     padding: 2em;
     margin: 1em;
+}
+@keyframes rotate360 {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+.rotate360 {
+    border-radius: 5rem;
+    color: chartreuse;
+    border: 1rem dotted chartreuse;
+    font-size: 2rem;
+    overflow: hidden;
+    animation-name: rotate360;
+    animation-duration: 2s;
+    animation-direction: normal;
+    animation-iteration-count: infinite;
+    /*transition-delay: 1s;*/
+    /*transition-duration: 0.8s;*/
+    /*transition-property: transform;*/
+    /*transform: rotate(360deg);*/
+    /*-webkit-transform: rotate(360deg);*/
+    /*-moz-transform: rotate(360deg);*/
+    /*-ms-transform: rotate(360deg);*/
+    /*-o-transform: rotate(360deg);*/
+}
+.hide {
+    display: none;
+}
+#rotateWarn {
+    background-color: transparent;
+    width: 10rem;
+    height: 10rem;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 10rem;
 }

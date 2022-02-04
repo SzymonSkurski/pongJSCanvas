@@ -9,6 +9,8 @@ let maxP = 5;
 let game = 0;
 let touchLastX = 0;
 let touchLastY = 0;
+let play = document.getElementById('play');
+
 // let previousAngle = null; //cache previous angle
 // let rotation = null; //h - horizontal | v - vertical
 
@@ -26,11 +28,12 @@ let touchLastY = 0;
 window.mobileCheck = () => {
     let check = false;
     ((a) => {// noinspection RegExpSingleCharAlternation,RegExpRedundantEscape
-        if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+        if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true;
+    })(navigator.userAgent || navigator.vendor || window.opera);
     return check;
 };
 
-//keys listener
+//keyboard keys listener
 document.onkeydown = (e) => {
     let key = e.key;
     //any key
@@ -55,6 +58,8 @@ document.onkeydown = (e) => {
         game = 0;
     }
 }
+
+//keyborad controll
 document.onkeyup = (e) => {
     let key = e.key;
     if (key === 'w') {
@@ -73,35 +78,47 @@ document.onkeyup = (e) => {
 
 function racketMoveUp(racket) {
     racket.vectorY = -getAspect();
-    racket.controlAI = false;
+    racket.controlAI = false; //user take controll
 }
 
 function racketMoveDown(racket) {
     racket.vectorY = getAspect();
-    racket.controlAI = false;
+    racket.controlAI = false; //user take controll
 }
 
+//click listener
 document.addEventListener('click', () => {
     manualClose();
     toggleFullScreen(true);
 });
-document.getElementById('play').addEventListener('touchstart', (e) => {
+
+window.addEventListener('touchstart', (e) => {
     touch(e);
     manualClose();
     restart();
 });
 
-document.getElementById('play').addEventListener('touchend', (e) => {
+window.addEventListener('touchend', (e) => {
     e.preventDefault();
     touchOver();
 });
 
-document.getElementById('play').addEventListener('touchcancel', (e) => {
+window.addEventListener('touchcancel', (e) => {
     e.preventDefault();
     touchOver();
 });
 
-document.getElementById('play').addEventListener('touchmove', (e) => {
+window.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    // touchMove(e);
+    touch(e);
+});
+
+window.addEventListener('longpress', (e) => {
+    e.preventDefault();
+});
+
+window.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     touch(e);
 });
@@ -112,20 +129,30 @@ window.addEventListener('resize', () => {
     restartBall();
 }, true);
 
-// window.addEventListener("orientationchange", () => {
-//     const angle = screen.orientation.angle;
-//     console.log(angle);
-//     // if (previousAngle === null) {
-//     //     previousAngle = angle;
-//     // }
-//     // // screen.orientation.angle 90 | 180 is preferred
-// }); CSS is enough
+window.addEventListener("orientationchange", () => {
+    const angle = screen.orientation.angle;
+    if (angle === 0 || angle === 180) {
+        const rWarn = document.getElementById('rotateWarn');
+        rWarn.classList.remove('hide');
+        setTimeout(() => {
+            const rWarn = document.getElementById('rotateWarn');
+            rWarn.classList.add('hide');
+        }, 4000);
+    }
+    setCanvasSize();
+    drawBoard(); //reset
+    restartBall();
+    // if (previousAngle === null) {
+    //     previousAngle = angle;
+    // }
+    // // screen.orientation.angle 90 | 180 is preferred
+});
 
 function toggleFullScreen(force = false) {
-    const   doc = window.document,
-            docEl = doc.documentElement,
-            requestFullScreen = docEl.requestFullscreen || docEl.webkitRequestFullScreen,
-            cancelFullScreen = doc.exitFullscreen || doc.webkitExitFullscreen;
+    const doc = window.document,
+        docEl = doc.documentElement,
+        requestFullScreen = docEl.requestFullscreen || docEl.webkitRequestFullScreen,
+        cancelFullScreen = doc.exitFullscreen || doc.webkitExitFullscreen;
     lockLandscape();
     if (!doc.fullscreenElement && !doc.webkitFullscreenElement) {
         requestFullScreen.call(docEl);
@@ -144,7 +171,7 @@ function lockLandscape() {
     if (so.type === 'landscape-primary' || so.type === 'landscape-secondary') {
         return;
     }
-    screen.orientation.lock('landscape-primary').catch(function(error) {
+    screen.orientation.lock('landscape-primary').catch(function (error) {
         //exception handle
     });
     //display rotate screen notification
@@ -156,7 +183,7 @@ function manualClose() {
 
 function touchOver() {
     let x = touchLastX;
-    if (!touchLastX) return;
+    if (!x) return;
     let r = getRacketDependOnSide(x);
     r.vectorY = 0;
     touchLastX = 0;
@@ -164,30 +191,39 @@ function touchOver() {
 }
 
 function touch(e) {
-    let off = (window.innerHeight - document.getElementById('play').height) / 2;
-    let y = Math.floor(e.targetTouches[0].clientY - off);
-    let x = Math.floor(e.targetTouches[0].clientX);
+    const [x, y] = getEventXY(e);
     touchLastX = x;
     touchLastY = y;
-    let r = getRacketDependOnSide(x);
-    let rCY = r.getCenterY();
+    const r = getRacketDependOnSide(x); //left or right racket
+    const rCY = r.getCenterY();
     // console.log(JSON.stringify([r.y, rCY, y, rCY - y]));
-    if (y === rCY) {
+    if (y === rCY || y === rCY - 1 || y === rCY + 1) {
         return;
     }
-    y > r.getCenterY()
-        ? racketMoveDown(r)
-        : racketMoveUp(r);
-
+    y > rCY ? racketMoveDown(r) : racketMoveUp(r);
+    touchLastX = x;
+    touchLastY = y;
 }
 
 function touchMove(e) {
-    let y = Math.floor(e.targetTouches[0].clientY || 0);
-    let x = Math.floor(e.targetTouches[0].clientX || 0);
+    const [x, y] = getEventXY(e);
     let r = getRacketDependOnSide(x);
-    if (touchLastY) touchLastY < y ? racketMoveDown(r) : racketMoveUp(r);
+    touchLastY < y ? racketMoveDown(r) : racketMoveUp(r);
     touchLastX = x;
     touchLastY = y;
+    console.log(JSON.stringify([x, y]));
+}
+
+function getEventXY(e) {
+    const off = (window.innerHeight - play.height) / 2;
+    const target = getEventTarget(e);
+    const y = Math.floor(target.clientY - off);
+    const x = Math.floor(target.clientX);
+    return [x, y];
+}
+
+function getEventTarget(e) {
+    return (((e.targetTouches || [])[0]) || e);
 }
 
 /**
@@ -196,9 +232,8 @@ function touchMove(e) {
  * @param max
  * @returns {*}
  */
-function randInt(min, max)
-{
-    return Math.floor(Math.random() * (max - min + 1) ) + min;
+function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function clearCanvas(id = 'play') {
@@ -244,7 +279,7 @@ function drawBoardPoints() {
     let space = Math.ceil(size / 2);
     let ctx = canvas.getContext('2d');
     ctx.font = size + "px Courier New CE";
-    ctx.fillText(p1.toString(), mx - size  , size);
+    ctx.fillText(p1.toString(), mx - size, size);
     ctx.fillText(p2.toString(), mx + space, size);
 }
 
@@ -335,8 +370,7 @@ function restartBall() {
 }
 
 function getAspect() {
-    let canvas = document.getElementById('play');
-    return Math.ceil(canvas.width / 500);
+    return Math.ceil(play.width / 500);
 }
 
 function getBall() {
@@ -403,7 +437,7 @@ function racketAI(racket) {
 function run() {
     clearCanvas();
     playerAI();
-    elements2d.forEach(function(el) {
+    elements2d.forEach(function (el) {
         if (!el) {
             return;
         }
@@ -432,17 +466,18 @@ function restart() {
 }
 
 function setCanvasSize() {
-    const sw = mobileCheck() ? screen.availWidth
+    const mobile = mobileCheck();
+    const sw = mobile ? screen.availWidth
         : document.documentElement.clientWidth;
-    const sh = mobileCheck() ? screen.availHeight
+    const sh = mobile ? screen.availHeight
         : document.documentElement.clientHeight;
-    let width = Math.ceil(sw * 0.96);
-    let ratio = 0.52;
+    let width = Math.ceil(sw * 0.98);
+    let ratio = mobile ? 0.64 : 0.52;
     let cw = width;
     let ch = Math.ceil(Math.min(width * ratio, sh * 0.96));
     // let ch = window.innerHeight * 0.9;
     let board = document.getElementById('board');
-    let play = document.getElementById('play');
+    let play = document.getElementById('play'); //canvas shortcut
     // console.log([sw, sh, cw, ch]);
     board.width = cw;
     board.height = ch;
@@ -484,4 +519,4 @@ function start() {
     game = setInterval(run, 10);
 }
 
-start();
+document.onload = start();
