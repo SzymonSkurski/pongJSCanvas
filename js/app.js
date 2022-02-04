@@ -87,7 +87,7 @@ function racketMoveDown(racket) {
 }
 
 //click listener
-document.addEventListener('click', () => {
+play.addEventListener('click', () => {
     manualClose();
     toggleFullScreen(true);
 });
@@ -100,16 +100,16 @@ window.addEventListener('touchstart', (e) => {
 
 window.addEventListener('touchend', (e) => {
     e.preventDefault();
-    touchOver();
+    // touchOver();
 });
 
 window.addEventListener('touchcancel', (e) => {
     e.preventDefault();
-    touchOver();
+    // touchOver();
 });
 
 window.addEventListener('touchmove', (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     // touchMove(e);
     touch(e);
 });
@@ -192,17 +192,16 @@ function touchOver() {
 
 function touch(e) {
     const [x, y] = getEventXY(e);
+    // console.log(JSON.stringify([x, y]));
     touchLastX = x;
     touchLastY = y;
     const r = getRacketDependOnSide(x); //left or right racket
     const rCY = r.getCenterY();
-    // console.log(JSON.stringify([r.y, rCY, y, rCY - y]));
-    if (y === rCY || y === rCY - 1 || y === rCY + 1) {
+    if (y === rCY) {
         return;
     }
-    y > rCY ? racketMoveDown(r) : racketMoveUp(r);
-    touchLastX = x;
-    touchLastY = y;
+    r.controlAI = false; //user take controll
+    r.setGoTo(null, y, getAspect());
 }
 
 function touchMove(e) {
@@ -211,7 +210,7 @@ function touchMove(e) {
     touchLastY < y ? racketMoveDown(r) : racketMoveUp(r);
     touchLastX = x;
     touchLastY = y;
-    console.log(JSON.stringify([x, y]));
+    // console.log(JSON.stringify([x, y]));
 }
 
 function getEventXY(e) {
@@ -370,7 +369,7 @@ function restartBall() {
 }
 
 function getAspect() {
-    return Math.ceil(play.width / 500);
+    return Math.max(1, Math.ceil(play.width / 500));
 }
 
 function getBall() {

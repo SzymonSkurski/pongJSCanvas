@@ -5,6 +5,9 @@ class Element2d {
     height = 1;
     vectorX = 1;
     vectorY = 1;
+    goToX = null;
+    goToY = null;
+
     colorRGB = [255, 255, 255];
     // edgeCollisions = [1, 1, 1, 1]; // [left, top, right, bottom] 1 - bounce | 0 - pass
     pixelMap = []; //use for polygons [[x1, x2], ..., [xn, yn]]
@@ -45,6 +48,7 @@ class Element2d {
         this.#perimeterMaxCache = this.getPerimeterMax(); //cache current
         this.collisionCanvasEdges();
         this.collisionOtherObjects();
+        this.goToCollisions();
     };
     collisionOtherObjects() {
         if (!this.getSize()) {
@@ -173,6 +177,34 @@ class Element2d {
         this.x += this.vectorX;
         this.y += this.vectorY;
     };
+    goToCollisions() {
+        this.goToColX();
+        this.goToColY();
+    }
+    goToColX() {
+        if (this.goToX === null) return;
+        if (this.goToX !== this.getCenterX()) return;
+        this.goToX = null;
+        this.vectorX = 0;
+    }
+    goToColY() {
+        if (this.goToY === null) return;
+        if (this.goToY !== this.getCenterY()) return;
+        this.goToY = null;
+        this.vectorY = 0;
+    }
+    setGoTo(x, y, v = 1) {
+        this.goToX = x;
+        this.goToY = y;
+        const cX = this.getCenterX();
+        const cY = this.getCenterY();
+        if (x !== null && x !== cX) {
+            this.vectorX = (cX > x) ? -v : v;
+        }
+        if (y !== null && y !== cY) {
+            this.vectorY = (cY > y) ? -v : v;
+        }
+    }
     moveBack() {
         if (!this.width) return;
         this.x -= this.vectorX;
@@ -239,8 +271,7 @@ class Element2d {
     setRGBFoF() {
         this.colorRGB = this.isEven() ? [0,0,255] : [255,255,255];
     }
-    collisionRandEffects() {
-    }
+    collisionRandEffects() {}
     drawPolygon(pixelMap, op = 1, fill = false) {
         let ctx = this.getContext2d();
         ctx.beginPath();

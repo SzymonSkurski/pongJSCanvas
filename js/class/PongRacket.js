@@ -10,6 +10,9 @@ class PongRacket extends Rectangle {
         this.vectorX = 0; //cannot move in X
         super.move();
     }
+    setGoTo(x, y, v = 1) {
+        super.setGoTo(null, y); //cannot go in x axis
+    }
     bounce(el) {
     }
     edgeCollisionEffectsBottom() {
